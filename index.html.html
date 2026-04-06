@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control de Presupuesto v8.6 | Edición Cromática</title>
+    <!-- Chart.js + Datalabels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap');
+
+        :root {
+            --bg-color: #010204; --glass-bg: rgba(13, 17, 23, 0.98); --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #818cf8; --accent-success: #10b981; --accent-danger: #f43f5e; --accent-warning: #fbbf24;
+            --text-main: #f8fafc; --text-dim: #94a3b8;
+            --tenpo: #a78bfa; --mp: #38bdf8; --copec: #fbbf24; --cash: #f3f4f6; --fintual: #f472b6;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif; -webkit-tap-highlight-color: transparent; }
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(at 0% 0%, rgba(129, 140, 248, 0.1) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            color: var(--text-main); height: 100vh; overflow: hidden; padding: 10px 15px; font-size: 13px;
+        }
+
+        .container { max-width: 1750px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; gap: 5px; }
+
+        header { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
+        .logo h1 { font-size: 24px; font-weight: 950; letter-spacing: -1.5px; color: #fff; }
+        .logo span { color: var(--accent-primary); }
+
+        .top-stats { display: flex; gap: 8px; }
+        .stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 5px 15px; border-radius: 12px; text-align: right; }
+        .stat-title { font-size: 7px; font-weight: 900; color: var(--text-dim); text-transform: uppercase; }
+        .stat-val { font-size: 18px; font-weight: 950; }
+
+        .island-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .is-c { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 14px; position: relative; transition: 0.2s; cursor: pointer; }
+        .is-amt { font-size: 16px; font-weight: 900; letter-spacing: -0.5px; }
+        .is-lab { font-size: 7px; font-weight: 950; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; display: block; }
+
+        .grid-3 { display: grid; grid-template-columns: 1.4fr 1.2fr 1fr; gap: 12px; flex: 1; min-height: 0; padding-bottom: 5px; }
+        .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; display: flex; flex-direction: column; overflow: hidden; }
+        .panel-h { font-size: 13px; font-weight: 950; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 6px; text-transform: uppercase; }
+
+        .scroller { flex: 1; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 8.5px; color: var(--text-dim); padding: 5px; }
+        td { padding: 6px 5px; font-size: 11px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+
+        .agenda-sc { overflow-y: auto; max-height: 100px; margin-bottom: 8px; }
+        .agenda-box { background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-primary); padding: 7px; border-radius: 8px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; }
+        .a-btn { width: 26px; height: 26px; border-radius: 7px; border: none; cursor: pointer; font-size: 12px; }
+
+        .btn-del { background: transparent; border: 0; color: var(--accent-danger); cursor: pointer; font-size: 12px; font-weight: 900; opacity: 0.3; transition: 0.3s; }
+        .btn-del:hover { opacity: 1; transform: scale(1.1); }
+
+        .tabs-row { display: flex; gap: 4px; margin-bottom: 8px; background: rgba(0,0,0,0.2); padding: 3px; border-radius: 10px; }
+        .tab-btn { flex:1; padding: 6px; border-radius: 7px; border: none; background: transparent; color: var(--text-dim); font-size: 7.5px; font-weight: 950; cursor: pointer; text-transform: uppercase; }
+        .tab-btn.active { background: var(--accent-primary); color: white; }
+
+        .chart-frame { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 0; }
+        
+        .form-g { margin-bottom: 5px; }
+        label { display: block; font-size: 7.5px; font-weight: 950; color: var(--text-dim); margin-bottom: 2px; text-transform: uppercase; }
+        input, select { width: 100%; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); padding: 7px; border-radius: 9px; color: #fff; outline:none; font-size: 12px; }
+        option { background-color: #0d1117 !important; color: #fff !important; }
+
+        .mode-row { display: flex; gap: 4px; margin-bottom: 8px; }
+        .m-pill { flex:1; padding: 7px; border-radius: 7px; border:1px solid var(--glass-border); background:transparent; color:var(--text-dim); font-size: 7.5px; font-weight: 900; cursor:pointer; }
+        .m-pill.act-e { border-color:var(--accent-danger); color:var(--accent-danger); background:rgba(244,63,94,0.1); }
+        .m-pill.act-i { border-color:var(--accent-success); color:var(--accent-success); background:rgba(16, 185, 129, 0.1); }
+
+        .btn-m { width:100%; padding:9px; border-radius:9px; border:none; font-weight: 950; font-size: 10px; cursor:pointer; text-transform: uppercase; }
+        .btn-startup { background: linear-gradient(135deg, var(--accent-primary), #6366f1); color: #fff; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+
+        .progress-box { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px; margin-top: auto; }
+        .rail { height: 7px; background: rgba(0,0,0,0.5); border-radius: 20px; margin: 6px 0; }
+        .bar { height: 100%; background: linear-gradient(90deg, var(--accent-primary), var(--accent-success)); transition: 2s; }
+
+        .util-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
+        .btn-util { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-dim); padding: 5px; border-radius: 7px; font-size: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .btn-cierre { background: var(--accent-warning); color: #000; font-weight: 950; }
+    </style>
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22FinanzasPRO%22,%22short_name%22:%22FinanzasPRO%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#010204%22,%22theme_color%22:%22#818cf8%22}">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo">
+            <h1>CONTROL DE <span>PRESUPUESTO</span></h1>
+            <p style="font-size: 8px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1px;">SISTEMA VISUAL v8.6</p>
+        </div>
+        <div class="top-stats">
+            <div class="stat-card">
+                <div class="stat-title">LIQUIDEZ MAESTRA</div>
+                <div class="stat-val" id="tot-val">$0</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent-danger)">
+                <div class="stat-title">BRECHA SEGURIDAD</div>
+                <div class="stat-val" id="gap-val" style="color: var(--accent-danger)">-$0</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="island-row">
+        <div class="is-c" onclick="fBy('tenpo')"><span class="is-lab">Tenpo</span><div class="is-amt" id="is-tenpo">$0</div></div>
+        <div class="is-c" onclick="fBy('mp')"><span class="is-lab">MP</span><div class="is-amt" id="is-mp">$0</div></div>
+        <div class="is-c" onclick="fBy('copec')"><span class="is-lab">Copec Pay</span><div class="is-amt" id="is-copec">$0</div></div>
+        <div class="is-c" onclick="fBy('cash')"><span class="is-lab">Efectivo/Caja</span><div class="is-amt" id="is-cash">$0</div></div>
+        <div class="is-c" style="opacity:0.6" onclick="fBy('fintual')"><span class="is-lab">Fintual</span><div class="is-amt" id="is-fintual">$0</div></div>
+    </div>
+
+    <div class="grid-3">
+        <div class="panel">
+            <div class="panel-h">Bitácora Forense <span>📊</span></div>
+            <div class="scroller"><table><thead><tr><th>Día</th><th>Concepto</th><th>Ruta</th><th>Monto</th><th></th></tr></thead><tbody id="hist-t"></tbody></table></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-h">Agenda Táctica</div>
+            <div class="form-g" style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:5px;">
+                <input type="text" id="a-desc" placeholder="Detalle..."><input type="date" id="a-date">
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 0.8fr 0.4fr; gap:5px; margin-bottom:5px;">
+                <input type="text" id="a-amt" placeholder="Monto" oninput="mask(this)">
+                <select id="a-mode"><option value="E">Gasto</option><option value="I">Ingreso</option></select>
+                <button class="a-btn" style="background:var(--accent-success); border:none;" onclick="addInt()">+</button>
+            </div>
+            <div class="agenda-sc" id="a-list"></div>
+            <div class="tabs-row">
+                <button id="tab-l" class="tab-btn active" onclick="setT('L')">Liquidez</button>
+                <button id="tab-e" class="tab-btn" onclick="setT('E')">Egresos</button>
+                <button id="tab-i" class="tab-btn" onclick="setT('I')">Ingresos</button>
+            </div>
+            <div class="chart-frame">
+                <div style="height: 100%; width: 100%;"><canvas id="pro-chart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-h">Operaciones</div>
+            <button class="btn-m btn-startup" onclick="boot()"><span>🚀 INICIAR PERIODO</span> <span>$347K</span></button>
+            <div class="mode-row">
+                <button id="m-e" class="m-pill act-e" onclick="mS('E')">EGRESO</button>
+                <button id="m-i" class="m-pill" onclick="mS('I')">INGRESO</button>
+                <button id="m-t" class="m-pill" onclick="mS('T')">PUENTE</button>
+            </div>
+            <div class="form-g"><label>Detalle</label><input type="text" id="o-desc" placeholder="Descripción"></div>
+            <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:5px;">
+                <div class="form-g"><label>Monto</label><input type="text" id="o-amt" placeholder="0" oninput="mask(this)"></div>
+                <div class="form-g"><label>Categoría</label><select id="o-cat"></select></div>
+            </div>
+            <div id="origin-box" class="form-g"><label id="l-or">Desde:</label><select id="o-isl">
+                <option value="tenpo">Tenpo</option><option value="mp">Mercado Pago</option><option value="copec">Copec Pay</option><option value="cash" selected>Caja Fuerte</option>
+            </select></div>
+            <div id="target-box" class="form-g" style="display:none;"><label>Hacia:</label><select id="o-trg">
+                <option value="tenpo" selected>Tenpo</option><option value="mp">Mercado Pago</option><option value="copec">Copec Pay</option><option value="cash">Caja Fuerte</option>
+            </select></div>
+            <button id="exec-btn" class="btn-m" style="background:var(--accent-danger); color:#fff; margin-top:5px;" onclick="exec()">EJECUTAR</button>
+            
+            <div class="util-row">
+                <button class="btn-util btn-cierre" onclick="closeM()">⏩ CIERRE MES</button>
+                <button class="btn-util" onclick="exportData()">💾 RESPALDO</button>
+            </div>
+
+            <div class="progress-box">
+                <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:950;">
+                    <span>SUPERVIVENCIA</span> <span id="pr-label" style="color:var(--accent-success)">$0</span>
+                </div>
+                <div class="rail"><div id="pr-bar" class="bar"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:7px; color:var(--text-dim); font-weight:900;">
+                    <span>INI: $347K</span> <span>META: $415K</span>
+                </div>
+            </div>
+            <button onclick="nuke()" style="background:transparent; border:0; color:#450a0a; font-size:7px; opacity:0.3; width:100%; margin-top:5px; cursor:pointer;">RESET TOTAL</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let s = {
+        m: 'E', b: {tenpo:0, mp:0, copec:0, cash:0, fintual:0},
+        txs: [], ints: [], p: 0, f: null, start: 347000, goal: 415000, tab: 'L'
+    };
+
+    const cnf = {
+        E: ['Arriendo', 'Supermercado', 'Servicios', 'Bencina', 'Seguro HDI', 'Gastos Casa', 'Social', 'Uber (Mant.)', 'Otros'],
+        I: ['Uber', 'Locales', 'Arriendo P2', 'Otros'], T: ['Ajuste']
+    };
+
+    let ch = null;
+
+    function init() {
+        try { if(typeof ChartDataLabels !== 'undefined') Chart.register(ChartDataLabels); } catch(e) {}
+        const d = localStorage.getItem('finanzas_pro_v8.6');
+        if(d) s = JSON.parse(d);
+        mS('E');
+        draw();
+    }
+
+    function mask(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function dec(n) { return parseInt(n.toString().replace(/\./g, "")) || 0; }
+
+    function mS(m) {
+        s.m = m;
+        document.getElementById('m-e').className = m === 'E' ? 'm-pill act-e' : 'm-pill';
+        document.getElementById('m-i').className = m === 'I' ? 'm-pill act-i' : 'm-pill';
+        document.getElementById('o-cat').innerHTML = cnf[m].map(x => `<option value="${x}">${x}</option>`).join('');
+        const b = document.getElementById('exec-btn');
+        const boxT = document.getElementById('target-box');
+        const lbl = document.getElementById('l-or');
+        if(m==='E') { b.style.background='var(--accent-danger)'; boxT.style.display='none'; lbl.innerText="Desde:"; }
+        else if(m==='I') { b.style.background='var(--accent-success)'; boxT.style.display='none'; lbl.innerText="Hacia:"; }
+        else { b.style.background='var(--accent-warning)'; boxT.style.display='block'; lbl.innerText="Desde:"; }
+    }
+
+    function boot() {
+        if(confirm("Reiniciar periodo con distribución de $347K.")) {
+            s.b = {tenpo:0, mp:0, copec:0, cash:347000, fintual:0}; 
+            s.txs = [{ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:"Capital Inicial", amount:347000, m:'I', cat:'Otros', isl:'cash' }];
+            s.p = 0; s.ints = [];
+            const d = [ {t:'tenpo', a:175000, d:"Puente Arriendo"}, {t:'mp', a:90000, d:"Puente Supermercado"}, {t:'copec', a:27000, d:"Puente Uber/Bencina"} ];
+            d.forEach(x => {
+                s.b.cash -= x.a; s.b[x.t] += x.a;
+                s.txs.unshift({ id:Date.now()+Math.random(), date:new Date().toLocaleDateString('es-CL'), desc:x.d, amount:x.a, m:'T', isl:'cash', target:x.t, cat:'Ajuste' });
+            });
+            save(); draw();
+        }
+    }
+
+    function addInt() {
+        const d = document.getElementById('a-desc').value;
+        const v = dec(document.getElementById('a-amt').value);
+        const dt = document.getElementById('a-date').value;
+        if(!d || v <= 0 || !dt) return alert("Faltan datos o FECHA.");
+        s.ints.push({ id:Date.now(), desc:d, date:dt, amount:v, type:document.getElementById('a-mode').value });
+        save(); draw();
+        document.getElementById('a-desc').value=''; document.getElementById('a-amt').value=''; document.getElementById('a-date').value='';
+    }
+
+    function confInt(id) {
+        const i = s.ints.find(x => x.id === id);
+        const sl = 'cash';
+        if(i.type === 'I') { s.b[sl] += i.amount; s.p += i.amount; } else s.b[sl] -= i.amount;
+        s.txs.unshift({ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:i.desc + " ✅", amount:i.amount, m:i.type, cat:'Otros', isl:sl });
+        s.ints = s.ints.filter(x => x.id !== id);
+        save(); draw();
+    }
+
+    function delTx(id) {
+        if(!confirm("¿Eliminar este registro y revertir el saldo?")) return;
+        const t = s.txs.find(x => x.id === id);
+        if(t.m === 'I') { s.b[t.isl] -= t.amount; if(t.cat==='Uber'||t.cat==='Locales') s.p -= t.amount; }
+        else if(t.m === 'E') s.b[t.isl] += t.amount;
+        else if(t.m === 'T') { s.b[t.isl] += t.amount; s.b[t.target] -= t.amount; }
+        s.txs = s.txs.filter(x => x.id !== id);
+        save(); draw();
+    }
+
+    function exec() {
+        const d = document.getElementById('o-desc').value;
+        const v = dec(document.getElementById('o-amt').value);
+        const isl = document.getElementById('o-isl').value;
+        const cat = document.getElementById('o-cat').value;
+        if(!d || v <= 0) return alert("Faltan datos.");
+        if(s.m==='I') { s.b[isl]+=v; if(cat==='Uber'||cat==='Locales') s.p+=v; }
+        else if(s.m==='E') s.b[isl]-=v;
+        else { s.b[isl]-=v; s.b[document.getElementById('o-trg').value]+=v; }
+        s.txs.unshift({ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:d, amount:v, m:s.m, cat:cat, isl:isl, target:s.m==='T'?document.getElementById('o-trg').value:null });
+        save(); draw();
+        document.getElementById('o-desc').value=''; document.getElementById('o-amt').value='';
+    }
+
+    function draw() {
+        let t = 0; for(let x in s.b) { document.getElementById(`is-${x}`).innerText = new Intl.NumberFormat('es-CL').format(s.b[x]); t += s.b[x]; }
+        document.getElementById('tot-val').innerText = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'}).format(t);
+        const cur = s.start + s.p;
+        const gap = s.goal - cur;
+        document.getElementById('gap-val').innerText = gap > 0 ? `-${new Intl.NumberFormat('es-CL').format(gap)}` : `SELLADO ✅`;
+        document.getElementById('gap-val').style.color = gap > 0 ? 'var(--accent-danger)' : 'var(--accent-success)';
+        const tb = document.getElementById('hist-t'); tb.innerHTML = '';
+        s.txs.slice(0,30).forEach(x => {
+            const co = x.m==='I'?'#10b981':x.m==='E'?'#f43f5e':'#fbbf24';
+            let r = x.m==='T' ? x.isl[0].toUpperCase()+'→'+(x.target?x.target[0].toUpperCase():'?') : x.isl[0].toUpperCase();
+            tb.innerHTML += `<tr><td>${x.date.split('/')[0]}</td><td><b>${x.desc}</b></td><td>${r}</td><td style="color:${co};font-weight:900;">${new Intl.NumberFormat('es-CL').format(x.amount)}</td><td><button class="btn-del" onclick="delTx(${x.id})">×</button></td></tr>`;
+        });
+        const al = document.getElementById('a-list'); al.innerHTML = '';
+        s.ints.forEach(i => {
+            const fDate = i.date.split('-').reverse().slice(0,2).join('/');
+            const co = i.type === 'I' ? 'var(--accent-success)' : 'var(--accent-danger)';
+            const borderCol = i.type === 'I' ? 'var(--accent-success)' : 'var(--accent-danger)';
+            al.innerHTML += `<div class="agenda-box" style="border-left-color:${borderCol}">
+                <div style="flex:1">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>${i.desc}</b> <span style="font-size:8px; opacity:0.6">${fDate}</span>
+                    </div>
+                    <div style="color:${co}; font-weight:900; font-size:11px;">
+                        ${i.type === 'I' ? '+' : '-'}${new Intl.NumberFormat('es-CL').format(i.amount)}
+                    </div>
+                </div>
+                <div class="a-actions" style="margin-left:10px;"><button class="a-btn" style="background:var(--accent-success); border:none;" onclick="confInt(${i.id})">✓</button><button class="a-btn" style="background:rgba(255,255,255,0.1); border:none; color:white;" onclick="s.ints=s.ints.filter(x=>x.id!=${i.id});save();draw();">×</button></div>
+            </div>`;
+        });
+        document.getElementById('pr-bar').style.width = Math.min((cur / s.goal) * 100, 100) + '%';
+        document.getElementById('pr-label').innerText = new Intl.NumberFormat('es-CL').format(cur);
+        refreshCh();
+    }
+
+    function setT(t) { s.tab = t; draw(); refreshCh(); }
+
+    function refreshCh() {
+        const ctx = document.getElementById('pro-chart').getContext('2d');
+        ['tab-l', 'tab-e', 'tab-i'].forEach(x => document.getElementById(x).className = 'tab-btn');
+        document.getElementById(`tab-${s.tab.toLowerCase()}`).className = 'tab-btn active';
+        let lbls = [], data = [], cls = [], tit = '';
+        if(s.tab === 'L') { tit = 'Patrimonio'; lbls = ['T','M','C','B','F']; data = Object.values(s.b); cls = ['#a78bfa', '#38bdf8', '#fbbf24', '#f3f4f6', '#f472b6']; }
+        else if(s.tab === 'E') { tit = 'Egresos'; const ex = {}; s.txs.filter(t=>t.m==='E').forEach(t=>ex[t.cat]=(ex[t.cat]||0)+t.amount); lbls = Object.keys(ex); data = Object.values(ex); cls = ['#f43f5e', '#fbbf24', '#818cf8', '#10b981']; }
+        else { tit = 'Ingresos'; const inc = {}; s.txs.filter(t=>t.m==='I').forEach(t=>inc[t.cat]=(inc[t.cat]||0)+t.amount); lbls = Object.keys(inc); data = Object.values(inc); cls = ['#10b981', '#818cf8', '#fbbf24']; }
+        if(ch) ch.destroy();
+        ch = new Chart(ctx, {
+            type:'doughnut',
+            data:{ labels:lbls, datasets:[{ data:data.length ? data : [1], backgroundColor:cls.length ? cls : ['#333'], borderWidth:0 }] },
+            options:{ 
+                responsive:true, maintainAspectRatio:false, cutout:'75%', 
+                plugins:{ 
+                    legend:{ display:false },
+                    datalabels: {
+                        color: '#fff', font: { weight: 'bold', size: 8 }, anchor: 'center', align: 'center',
+                        formatter: (val) => val > 1000 ? (new Intl.NumberFormat('es-CL').format(val/1000)+'k') : ''
+                    }
+                } 
+            }
+        });
+    }
+
+    function save() { localStorage.setItem('finanzas_pro_v8.6', JSON.stringify(s)); }
+    function exportData() {
+        const bl = new Blob([JSON.stringify(s)], {type: 'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = `Respaldo_Visual_${new Date().toLocaleDateString()}.json`; a.click();
+    }
+    function nuke() { if(confirm("¿BORRAR TODO?")) { localStorage.clear(); location.reload(); } }
+    function closeM() { if(confirm("¿Cerrar periodo?")) { s.txs = s.txs.slice(0,1); s.p = 0; s.ints = []; save(); draw(); } }
+    init();
+</script>
+
+</body>
+</html>

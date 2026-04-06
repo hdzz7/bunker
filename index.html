@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Búnker Pro v9.0 | Edición Mobile Master</title>
+    <title>Búnker Pro v9.1 | Sello Antidesborde</title>
     <!-- Chart.js + Datalabels Plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -19,11 +19,11 @@
 
         /* Base & Desktop Zero-Scroll */
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; overflow-x: hidden; background-color: var(--bg-color); color: var(--text-main); font-size: 13px; }
+        
         body {
-            background-color: var(--bg-color);
             background-image: radial-gradient(at 0% 0%, rgba(129, 140, 248, 0.1) 0px, transparent 50%),
                               radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
-            color: var(--text-main); font-size: 13px;
         }
 
         @media (min-width: 601px) {
@@ -35,36 +35,38 @@
 
         /* Mobile Optimization (Xiaomi/Android Friendly) */
         @media (max-width: 600px) {
-            body { overflow-y: auto; padding: 15px 10px 40px 10px; }
-            .container { display: flex; flex-direction: column; gap: 15px; }
-            header { flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 15px; }
-            .logo h1 { font-size: 28px; }
-            .top-stats { width: 100%; justify-content: space-between; }
-            .stat-card { flex: 1; text-align: center; padding: 10px; }
+            body { overflow-y: auto; padding: 10px 12px 40px 12px; }
+            .container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+            header { flex-direction: column; align-items: flex-start; gap: 8px; padding-bottom: 10px; }
+            .logo h1 { font-size: 26px; }
+            .top-stats { width: 100%; justify-content: space-between; gap: 10px; }
+            .stat-card { flex: 1; text-align: left; padding: 8px 12px; min-width: 0; }
+            .stat-val { font-size: 18px; }
 
-            .island-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .island-row { grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
             .is-c:last-child { grid-column: span 2; opacity: 0.8 !important; }
-            .is-c { padding: 15px; }
-            .is-amt { font-size: 18px; }
-            .is-lab { font-size: 9px; }
+            .is-c { padding: 12px; min-width: 0; }
+            .is-amt { font-size: 17px; }
 
-            .grid-3 { display: flex; flex-direction: column; gap: 15px; }
-            .panel { width: 100%; border-radius: 25px; padding: 20px; }
-            .panel-h { font-size: 16px; padding-bottom: 10px; }
+            .grid-3 { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+            .panel { width: 100%; border-radius: 22px; padding: 18px; }
+            .panel-h { font-size: 14px; padding-bottom: 8px; }
             
-            input, select, .btn-m, .m-pill { padding: 14px; font-size: 14px; border-radius: 12px; }
-            .util-row { grid-template-columns: 1fr; gap: 10px; }
-            .btn-util { padding: 12px; font-size: 10px; }
-            .agenda-box { padding: 12px; }
-            .a-btn { width: 35px; height: 35px; }
+            input, select, .btn-m, .m-pill { padding: 12px; font-size: 14px; border-radius: 10px; }
+            .agenda-box { padding: 10px; }
+            .a-btn { width: 40px; height: 40px; }
+            .util-row { grid-template-columns: 1fr; gap: 8px; }
 
-            .chart-frame { min-height: 250px; }
-            #hist-t td { font-size: 12px; padding: 10px 5px; }
-            .scroller { max-height: 400px; }
+            .chart-frame { min-height: 220px; width: 100%; }
+            #hist-t td { font-size: 11px; padding: 8px 4px; }
+            
+            /* Corrección del desborde en Agenda */
+            .agenda-form { display: grid; grid-template-columns: 1fr 1fr 45px; gap: 5px; width: 100%; }
+            .agenda-date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 100%; margin-bottom: 5px; }
         }
 
         /* Universal Components */
-        .container { max-width: 1750px; margin: 0 auto; }
+        .container { max-width: 1750px; margin: 0 auto; width: 100%; }
         header { display: flex; justify-content: space-between; align-items: center; }
         .logo h1 { font-weight: 950; letter-spacing: -1.5px; color: #fff; line-height: 1; }
         .logo span { color: var(--accent-primary); }
@@ -73,33 +75,33 @@
         .stat-title { font-size: 7.5px; font-weight: 900; color: var(--text-dim); text-transform: uppercase; }
         .stat-val { font-size: 20px; font-weight: 950; }
 
-        .island-row { display: grid; }
-        .is-c { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; position: relative; transition: 0.2s; cursor: pointer; }
+        .is-c { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; transition: 0.2s; cursor: pointer; }
         .is-c:hover { background: rgba(255,255,255,0.03); }
+        .is-lab { font-size: 7px; font-weight: 950; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; display: block; }
 
-        .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; flex-direction: column; overflow: hidden; }
+        .panel { background: var(--glass-bg); border: 1px solid var(--glass-border); display: flex; flex-direction: column; }
         .panel-h { font-weight: 950; border-bottom: 1px solid var(--glass-border); text-transform: uppercase; }
 
         .scroller { flex: 1; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; font-size: 9px; color: var(--text-dim); padding: 5px; text-transform: uppercase; }
+        th { text-align: left; font-size: 8px; color: var(--text-dim); padding: 5px; text-transform: uppercase; }
         td { border-bottom: 1px solid rgba(255,255,255,0.02); }
 
         .agenda-box { background: rgba(255,255,255,0.02); border-left: 4px solid var(--accent-primary); border-radius: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .a-btn { border-radius: 9px; border: none; cursor: pointer; font-size: 14px; }
-        .btn-del { background: transparent; border: 0; color: var(--accent-danger); cursor: pointer; font-size: 14px; font-weight: 900; opacity: 0.4; padding: 5px; }
+        .a-btn { border-radius: 8px; border: none; cursor: pointer; font-size: 16px; }
+        .btn-del { background: transparent; border: 0; color: var(--accent-danger); cursor: pointer; font-size: 14px; font-weight: 900; opacity: 0.4; }
 
         .tabs-row { display: flex; gap: 4px; border-radius: 12px; background: rgba(0,0,0,0.2); padding: 4px; margin-bottom: 10px; }
-        .tab-btn { flex:1; padding: 8px; border-radius: 8px; border: none; background: transparent; color: var(--text-dim); font-size: 8px; font-weight: 950; cursor: pointer; text-transform: uppercase; }
+        .tab-btn { flex:1; padding: 8px; border-radius: 8px; border: none; background: transparent; color: var(--text-dim); font-size: 7.5px; font-weight: 950; cursor: pointer; text-transform: uppercase; }
         .tab-btn.active { background: var(--accent-primary); color: white; }
 
-        .chart-frame { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 150px; }
+        .chart-frame { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
         
-        .form-g { margin-bottom: 8px; }
+        .form-g { margin-bottom: 8px; width: 100%; }
         label { display: block; font-size: 8px; font-weight: 950; color: var(--text-dim); margin-bottom: 3px; text-transform: uppercase; }
-        input, select { border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: #fff; outline:none; }
+        input, select { border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: #fff; outline:none; width: 100%; }
 
-        .mode-row { display: flex; gap: 5px; margin-bottom: 10px; }
+        .mode-row { display: flex; gap: 5px; margin-bottom: 10px; width: 100%; }
         .m-pill { flex:1; border:1px solid var(--glass-border); background:transparent; color:var(--text-dim); font-weight: 900; cursor:pointer; text-transform: uppercase; }
         .m-pill.act-e { border-color:var(--accent-danger); color:var(--accent-danger); background:rgba(244,63,94,0.1); }
         .m-pill.act-i { border-color:var(--accent-success); color:var(--accent-success); background:rgba(16, 185, 129, 0.1); }
@@ -108,10 +110,10 @@
         .btn-startup { background: linear-gradient(135deg, var(--accent-primary), #6366f1); color: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
         .progress-box { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 15px; padding: 12px; margin-top: auto; }
-        .rail { height: 8px; background: rgba(0,0,0,0.5); border-radius: 20px; overflow: hidden; }
+        .rail { height: 8px; background: rgba(0,0,0,0.5); border-radius: 20px; overflow: hidden; margin: 4px 0; }
         .bar { height: 100%; background: linear-gradient(90deg, var(--accent-primary), var(--accent-success)); transition: 1s; }
 
-        .btn-util { border: 1px solid var(--glass-border); color: var(--text-dim); font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .btn-util { border: 1px solid var(--glass-border); color: var(--text-dim); font-weight: 900; cursor: pointer; text-transform: uppercase; padding: 8px; border-radius: 8px; }
         .btn-cierre { background: var(--accent-warning); color: #000; }
     </style>
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22FinanzasPRO%22,%22short_name%22:%22FinanzasPRO%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#010204%22,%22theme_color%22:%22#818cf8%22}">
@@ -122,7 +124,7 @@
     <header>
         <div class="logo">
             <h1>CONTROL DE <span>PRESUPUESTO</span></h1>
-            <p style="font-size: 8px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1px;">MOBILE MASTER v9.0</p>
+            <p id="system-ver" style="font-size: 8px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1px;">SISTEMA SELLADO v9.1</p>
         </div>
         <div class="top-stats">
             <div class="stat-card">
@@ -152,15 +154,15 @@
 
         <div class="panel">
             <div class="panel-h">Agenda Táctica</div>
-            <div class="form-g" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+            <div class="agenda-date-row">
                 <input type="text" id="a-desc" placeholder="Detalle..."><input type="date" id="a-date">
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 0.4fr; gap:5px; margin-bottom:8px;">
+            <div class="agenda-form">
                 <input type="text" id="a-amt" placeholder="Monto" oninput="mask(this)">
                 <select id="a-mode"><option value="E">Gasto</option><option value="I">Ingreso</option></select>
                 <button class="a-btn" style="background:var(--accent-success); border:none;" onclick="addInt()">+</button>
             </div>
-            <div class="agenda-sc" id="a-list"></div>
+            <div class="agenda-sc" id="a-list" style="margin-top:10px;"></div>
             <div class="tabs-row">
                 <button id="tab-l" class="tab-btn active" onclick="setT('L')">Patrimonio</button>
                 <button id="tab-e" class="tab-btn" onclick="setT('E')">Gastos</button>
@@ -178,9 +180,9 @@
                 <button id="m-t" class="m-pill" onclick="mS('T')">Puente</button>
             </div>
             <div class="form-g"><label>Detalle</label><input type="text" id="o-desc" placeholder="Descripción"></div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <div class="form-g"><label>Monto</label><input type="text" id="o-amt" placeholder="0" oninput="mask(this)"></div>
-                <div class="form-g"><label>Categoría</label><select id="o-cat"></select></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <div style="min-width:0;"><label>Monto</label><input type="text" id="o-amt" placeholder="0" oninput="mask(this)"></div>
+                <div style="min-width:0;"><label>Categoría</label><select id="o-cat"></select></div>
             </div>
             <div id="origin-box" class="form-g"><label id="l-or">Desde:</label><select id="o-isl">
                 <option value="tenpo">Tenpo</option><option value="mp">Mercado Pago</option><option value="copec">Copec Pay</option><option value="cash" selected>Caja Fuerte</option>
@@ -204,7 +206,7 @@
                     <span>INI: $347K</span> <span>META: $415K</span>
                 </div>
             </div>
-            <button onclick="nuke()" style="background:transparent; border:0; color:#450a0a; font-size:9px; opacity:0.3; width:100%; margin-top:20px; cursor:pointer; padding:10px;">RESET TOTAL (Nuke)</button>
+            <button onclick="nuke()" style="background:transparent; border:0; color:#450a0a; font-size:9px; opacity:0.3; width:100%; margin-top:20px; cursor:pointer; padding:10px;">RESET TOTAL</button>
         </div>
     </div>
 </div>
@@ -215,19 +217,14 @@
         txs: [], ints: [], p: 0, f: null, start: 347000, goal: 415000, tab: 'L'
     };
 
-    const cnf = {
-        E: ['Arriendo', 'Supermercado', 'Servicios', 'Bencina', 'Seguro HDI', 'Gastos Casa', 'Social', 'Uber (Mant.)', 'Otros'],
-        I: ['Uber', 'Locales', 'Arriendo P2', 'Otros'], T: ['Ajuste']
-    };
-
+    const cnf = { E: ['Arriendo', 'Supermercado', 'Servicios', 'Bencina', 'Seguro HDI', 'Gastos Casa', 'Social', 'Uber (Mant.)', 'Otros'], I: ['Uber', 'Locales', 'Arriendo P2', 'Otros'], T: ['Ajuste'] };
     let ch = null;
 
     function init() {
         try { if(typeof ChartDataLabels !== 'undefined') Chart.register(ChartDataLabels); } catch(e) {}
-        const d = localStorage.getItem('finanzas_pro_v9.0');
+        const d = localStorage.getItem('finanzas_pro_v9.1');
         if(d) s = JSON.parse(d);
-        mS('E');
-        draw();
+        mS('E'); draw();
     }
 
     function mask(e) { e.value = e.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
@@ -240,74 +237,57 @@
         document.getElementById('o-cat').innerHTML = cnf[m].map(x => `<option value="${x}">${x}</option>`).join('');
         const b = document.getElementById('exec-btn');
         const boxT = document.getElementById('target-box');
-        const lbl = document.getElementById('l-or');
-        if(m==='E') { b.style.background='var(--accent-danger)'; boxT.style.display='none'; lbl.innerText="Desde:"; }
-        else if(m==='I') { b.style.background='var(--accent-success)'; boxT.style.display='none'; lbl.innerText="Hacia:"; }
-        else { b.style.background='var(--accent-warning)'; boxT.style.display='block'; lbl.innerText="Desde:"; }
+        if(m==='E') { b.style.background='var(--accent-danger)'; boxT.style.display='none'; }
+        else if(m==='I') { b.style.background='var(--accent-success)'; boxT.style.display='none'; }
+        else { b.style.background='var(--accent-warning)'; boxT.style.display='block'; }
     }
 
     function boot() {
-        if(confirm("Reiniciar periodo con distribución de $347K.")) {
-            s.b = {tenpo:0, mp:0, copec:0, cash:347000, fintual:0}; 
-            s.txs = [{ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:"Capital Inicial", amount:347000, m:'I', cat:'Otros', isl:'cash' }];
-            s.p = 0; s.ints = [];
+        if(confirm("Reiniciar periodo ($347K).")) {
+            s.b = {tenpo:0, mp:0, copec:0, cash:347000, fintual:0}; s.txs = [{ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:"Capital Inicial", amount:347000, m:'I', cat:'Otros', isl:'cash' }]; s.p = 0; s.ints = [];
             const d = [ {t:'tenpo', a:175000, d:"Puente Arriendo"}, {t:'mp', a:90000, d:"Puente Supermercado"}, {t:'copec', a:27000, d:"Puente Uber/Bencina"} ];
-            d.forEach(x => {
-                s.b.cash -= x.a; s.b[x.t] += x.a;
-                s.txs.unshift({ id:Date.now()+Math.random(), date:new Date().toLocaleDateString('es-CL'), desc:x.d, amount:x.a, m:'T', isl:'cash', target:x.t, cat:'Ajuste' });
-            });
+            d.forEach(x => { s.b.cash -= x.a; s.b[x.t] += x.a; s.txs.unshift({ id:Date.now()+Math.random(), date:new Date().toLocaleDateString('es-CL'), desc:x.d, amount:x.a, m:'T', isl:'cash', target:x.t, cat:'Ajuste' }); });
             save(); draw();
         }
     }
 
     function addInt() {
-        const d = document.getElementById('a-desc').value;
-        const v = dec(document.getElementById('a-amt').value);
-        const dt = document.getElementById('a-date').value;
+        const d = document.getElementById('a-desc').value; const v = dec(document.getElementById('a-amt').value); const dt = document.getElementById('a-date').value;
         if(!d || v <= 0 || !dt) return alert("Faltan datos.");
-        s.ints.push({ id:Date.now(), desc:d, date:dt, amount:v, type:document.getElementById('a-mode').value });
-        save(); draw();
+        s.ints.push({ id:Date.now(), desc:d, date:dt, amount:v, type:document.getElementById('a-mode').value }); save(); draw();
         document.getElementById('a-desc').value=''; document.getElementById('a-amt').value=''; document.getElementById('a-date').value='';
     }
 
     function confInt(id) {
-        const i = s.ints.find(x => x.id === id);
-        const sl = 'cash';
+        const i = s.ints.find(x => x.id === id); const sl = 'cash';
         if(i.type === 'I') { s.b[sl] += i.amount; s.p += i.amount; } else s.b[sl] -= i.amount;
         s.txs.unshift({ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:i.desc + " ✅", amount:i.amount, m:i.type, cat:'Otros', isl:sl });
-        s.ints = s.ints.filter(x => x.id !== id);
-        save(); draw();
+        s.ints = s.ints.filter(x => x.id !== id); save(); draw();
     }
 
     function delTx(id) {
-        if(!confirm("¿Eliminar este registro?")) return;
+        if(!confirm("¿Eliminar?")) return;
         const t = s.txs.find(x => x.id === id);
         if(t.m === 'I') { s.b[t.isl] -= t.amount; if(t.cat==='Uber'||t.cat==='Locales') s.p -= t.amount; }
         else if(t.m === 'E') s.b[t.isl] += t.amount;
         else if(t.m === 'T') { s.b[t.isl] += t.amount; s.b[t.target] -= t.amount; }
-        s.txs = s.txs.filter(x => x.id !== id);
-        save(); draw();
+        s.txs = s.txs.filter(x => x.id !== id); save(); draw();
     }
 
     function exec() {
-        const d = document.getElementById('o-desc').value;
-        const v = dec(document.getElementById('o-amt').value);
-        const isl = document.getElementById('o-isl').value;
-        const cat = document.getElementById('o-cat').value;
+        const d = document.getElementById('o-desc').value; const v = dec(document.getElementById('o-amt').value); const isl = document.getElementById('o-isl').value; const cat = document.getElementById('o-cat').value;
         if(!d || v <= 0) return alert("Faltan datos.");
         if(s.m==='I') { s.b[isl]+=v; if(cat==='Uber'||cat==='Locales') s.p+=v; }
         else if(s.m==='E') s.b[isl]-=v;
         else { s.b[isl]-=v; s.b[document.getElementById('o-trg').value]+=v; }
-        s.txs.unshift({ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:d, amount:v, m:s.m, cat:cat, isl:isl, target:s.m==='T'?document.getElementById('o-trg').value:null });
-        save(); draw();
+        s.txs.unshift({ id:Date.now(), date:new Date().toLocaleDateString('es-CL'), desc:d, amount:v, m:s.m, cat:cat, isl:isl, target:s.m==='T'?document.getElementById('o-trg').value:null }); save(); draw();
         document.getElementById('o-desc').value=''; document.getElementById('o-amt').value='';
     }
 
     function draw() {
         let t = 0; for(let x in s.b) { document.getElementById(`is-${x}`).innerText = new Intl.NumberFormat('es-CL').format(s.b[x]); t += s.b[x]; }
         document.getElementById('tot-val').innerText = new Intl.NumberFormat('es-CL').format(t);
-        const cur = s.start + s.p;
-        const gap = s.goal - cur;
+        const cur = s.start + s.p; const gap = s.goal - cur;
         document.getElementById('gap-val').innerText = gap > 0 ? `-${new Intl.NumberFormat('es-CL').format(gap)}` : `SELLADO`;
         document.getElementById('gap-val').style.color = gap > 0 ? 'var(--accent-danger)' : 'var(--accent-success)';
         const tb = document.getElementById('hist-t'); tb.innerHTML = '';
@@ -318,22 +298,10 @@
         });
         const al = document.getElementById('a-list'); al.innerHTML = '';
         s.ints.forEach(i => {
-            const fDate = i.date.split('-').reverse().slice(0,2).join('/');
-            const co = i.type === 'I' ? 'var(--accent-success)' : 'var(--accent-danger)';
-            al.innerHTML += `<div class="agenda-box" style="border-left-color:${co}">
-                <div style="flex:1">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${i.desc}</b> <span style="font-size:9px; opacity:0.6">${fDate}</span>
-                    </div>
-                    <div style="color:${co}; font-weight:900; font-size:13px;">
-                        ${i.type === 'I' ? '+' : '-'}${new Intl.NumberFormat('es-CL').format(i.amount)}
-                    </div>
-                </div>
-                <div class="a-actions" style="margin-left:10px;"><button class="a-btn" style="background:var(--accent-success); border:none;" onclick="confInt(${i.id})">✓</button><button class="a-btn" style="background:rgba(255,255,255,0.1); border:none; color:white;" onclick="s.ints=s.ints.filter(x=>x.id!=${i.id});save();draw();">×</button></div>
-            </div>`;
+            const fDate = i.date.split('-').reverse().slice(0,2).join('/'); const co = i.type === 'I' ? 'var(--accent-success)' : 'var(--accent-danger)';
+            al.innerHTML += `<div class="agenda-box" style="border-left-color:${co}"><div style="flex:1"><div style="display:flex; justify-content:space-between; align-items:center;"><b>${i.desc}</b> <span style="font-size:9px; opacity:0.6">${fDate}</span></div><div style="color:${co}; font-weight:900; font-size:13px;">${i.type === 'I' ? '+' : '-'}${new Intl.NumberFormat('es-CL').format(i.amount)}</div></div><div class="a-actions" style="margin-left:10px;"><button class="a-btn" style="background:var(--accent-success); border:none;" onclick="confInt(${i.id})">✓</button></div></div>`;
         });
-        document.getElementById('pr-bar').style.width = Math.min((cur / s.goal) * 100, 100) + '%';
-        document.getElementById('pr-label').innerText = new Intl.NumberFormat('es-CL').format(cur);
+        document.getElementById('pr-bar').style.width = Math.min((cur / s.goal) * 100, 100) + '%'; document.getElementById('pr-label').innerText = new Intl.NumberFormat('es-CL').format(cur);
         refreshCh();
     }
 
@@ -341,34 +309,20 @@
 
     function refreshCh() {
         const ctx = document.getElementById('pro-chart').getContext('2d');
-        ['tab-l', 'tab-e', 'tab-i'].forEach(x => document.getElementById(x).className = 'tab-btn');
-        document.getElementById(`tab-${s.tab.toLowerCase()}`).className = 'tab-btn active';
-        let lbls = [], data = [], cls = [], tit = '';
-        if(s.tab === 'L') { tit = 'Patrimonio'; lbls = ['T','M','C','B','F']; data = Object.values(s.b); cls = ['#a78bfa', '#38bdf8', '#fbbf24', '#f3f4f6', '#f472b6']; }
-        else if(s.tab === 'E') { tit = 'Egresos'; const ex = {}; s.txs.filter(t=>t.m==='E').forEach(t=>ex[t.cat]=(ex[t.cat]||0)+t.amount); lbls = Object.keys(ex); data = Object.values(ex); cls = ['#f43f5e', '#fbbf24', '#818cf8', '#10b981']; }
-        else { tit = 'Ingresos'; const inc = {}; s.txs.filter(t=>t.m==='I').forEach(t=>inc[t.cat]=(inc[t.cat]||0)+t.amount); lbls = Object.keys(inc); data = Object.values(inc); cls = ['#10b981', '#818cf8', '#fbbf24']; }
+        ['tab-l', 'tab-e', 'tab-i'].forEach(x => document.getElementById(x).className = 'tab-btn'); document.getElementById(`tab-${s.tab.toLowerCase()}`).className = 'tab-btn active';
+        let lbls = [], data = [], cls = [];
+        if(s.tab === 'L') { lbls = ['T','M','C','B','F']; data = Object.values(s.b); cls = ['#a78bfa', '#38bdf8', '#fbbf24', '#f3f4f6', '#f472b6']; }
+        else if(s.tab === 'E') { const ex = {}; s.txs.filter(t=>t.m==='E').forEach(t=>ex[t.cat]=(ex[t.cat]||0)+t.amount); lbls = Object.keys(ex); data = Object.values(ex); cls = ['#f43f5e', '#fbbf24', '#818cf8', '#10b981']; }
+        else { const inc = {}; s.txs.filter(t=>t.m==='I').forEach(t=>inc[t.cat]=(inc[t.cat]||0)+t.amount); lbls = Object.keys(inc); data = Object.values(inc); cls = ['#10b981', '#818cf8', '#fbbf24']; }
         if(ch) ch.destroy();
         ch = new Chart(ctx, {
-            type:'doughnut',
-            data:{ labels:lbls, datasets:[{ data:data.length ? data : [1], backgroundColor:cls.length ? cls : ['#333'], borderWidth:0 }] },
-            options:{ 
-                responsive:true, maintainAspectRatio:false, cutout:'70%', 
-                plugins:{ 
-                    legend:{ display:false },
-                    datalabels: {
-                        color: '#fff', font: { weight: 'bold', size: 10 }, anchor: 'center', align: 'center',
-                        formatter: (val) => val > 1000 ? (new Intl.NumberFormat('es-CL').format(val/1000)+'k') : ''
-                    }
-                } 
-            }
+            type:'doughnut', data:{ labels:lbls, datasets:[{ data:data.length ? data : [1], backgroundColor:cls.length ? cls : ['#333'], borderWidth:0 }] },
+            options:{ responsive:true, maintainAspectRatio:false, cutout:'70%', plugins:{ legend:{ display:false }, datalabels: { color:'#fff', font:{weight:'bold', size:10}, anchor:'center', align:'center', formatter:(val)=>val>1000?(new Intl.NumberFormat('es-CL').format(val/1000)+'k'):'' } } }
         });
     }
 
-    function save() { localStorage.setItem('finanzas_pro_v9.0', JSON.stringify(s)); }
-    function exportData() {
-        const bl = new Blob([JSON.stringify(s)], {type: 'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = `Respaldo_Bunker_${new Date().toLocaleDateString()}.json`; a.click();
-    }
+    function save() { localStorage.setItem('finanzas_pro_v9.1', JSON.stringify(s)); }
+    function exportData() { const bl = new Blob([JSON.stringify(s)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = `Respaldo_Bunker_${new Date().toLocaleDateString()}.json`; a.click(); }
     function nuke() { if(confirm("¿BORRAR TODO?")) { localStorage.clear(); location.reload(); } }
     function closeM() { if(confirm("¿Cerrar periodo?")) { s.txs = s.txs.slice(0,1); s.p = 0; s.ints = []; save(); draw(); } }
     init();
